@@ -1,0 +1,30 @@
+# docker-compose.yml
+services:
+  traefik:
+    image: traefik:v3.1
+    command:
+      - "--configFile=/etc/traefik/traefik.yml"
+    ports:
+      - "80:80"       # Porta HTTP
+      - "443:443"     # Porta HTTPS (se necessário)
+      - "8080:8080"   # Porta do painel do Traefik
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik.yml:/etc/traefik/traefik.yml"
+      - "./dynamic.yml:/etc/traefik/dynamic/dynamic.yml"
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    volumes:
+      - open-webui:/app/backend/data
+    env_file:
+      "./.env"
+    restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    labels:
+      - "traefik.enable=true"
+
+volumes:
+  open-webui:

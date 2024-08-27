@@ -1,0 +1,14 @@
+# dynamic.yml
+http:
+  routers:
+    open-webui:
+      rule: "Host(`localhost`)"
+      service: open-webui
+      entryPoints:
+        - web
+
+  services:
+    open-webui:
+      loadBalancer:
+        servers:
+          - url: "http://open-webui:8080"
